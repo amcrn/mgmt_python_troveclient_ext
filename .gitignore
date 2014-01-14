@@ -1,0 +1,6 @@
+*.pyc
+.venv
+.DS_STORE
+mgmt_python_troveclient_ext.egg-info/
+dist
+build
