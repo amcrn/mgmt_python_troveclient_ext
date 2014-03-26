@@ -32,7 +32,7 @@ class Quotas(base.ManagerWithFind):
         """Get a list of quota limits for a tenant"""
         url = "/mgmt/quotas/%s" % tenant_id
         resp, body = self.api.client.get(url)
-        common.check_for_exceptions(resp, body)
+        common.check_for_exceptions(resp, body, url)
         if not body:
             raise Exception("Call to " + url + " did not return a body.")
         if 'quotas' not in body:
@@ -44,7 +44,7 @@ class Quotas(base.ManagerWithFind):
         url = "/mgmt/quotas/%s" % id
         body = {"quotas": json.loads(quotas)}
         resp, body = self.api.client.put(url, body=body)
-        common.check_for_exceptions(resp, body)
+        common.check_for_exceptions(resp, body, url)
         if not body:
             raise Exception("Call to " + url + " did not return a body.")
         if 'quotas' not in body:

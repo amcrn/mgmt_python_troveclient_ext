@@ -45,7 +45,7 @@ class Hosts(base.ManagerWithFind):
         """
         url = "/mgmt/hosts/%s/instances/action" % host_id
         resp, body = self.api.client.post(url, body=body)
-        common.check_for_exceptions(resp, body)
+        common.check_for_exceptions(resp, body, url)
 
     def update_all(self, host_id):
         """
@@ -86,7 +86,7 @@ class Hosts(base.ManagerWithFind):
 @utils.service_type('database')
 def do_mgmt_host_list(cs, args):
     """List all hosts"""
-    hosts = cs.hosts.index()
+    hosts = cs.hosts_python_troveclient_ext.index()
     utils.print_list(hosts)
 
 

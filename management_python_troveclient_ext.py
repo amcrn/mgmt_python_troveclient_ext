@@ -80,7 +80,7 @@ class Management(base.ManagerWithFind):
         """
         url = "/mgmt/instances/%s/action" % instance_id
         resp, body = self.api.client.post(url, body=body)
-        common.check_for_exceptions(resp, body)
+        common.check_for_exceptions(resp, body, url)
         if body:
             return self.resource_class(self, body, loaded=True)
         return body
@@ -138,7 +138,7 @@ def _print_instance(instance):
 @utils.service_type('database')
 def do_mgmt_show(cs, args):
     """Show details of an instance"""
-    instance = cs.management.show(args.instance)
+    instance = cs.management_python_troveclient_ext.show(args.instance)
     instance._info['flavor'] = instance.flavor['id']
     if hasattr(instance, 'volume'):
         instance._info['volume'] = instance.volume['size']
@@ -165,7 +165,7 @@ def do_mgmt_show(cs, args):
 @utils.service_type('database')
 def do_mgmt_list(cs, args):
     """List all instances"""
-    instances = cs.management.index(deleted=args.deleted)
+    instances = cs.management_python_troveclient_ext.index(deleted=args.deleted)
     for instance in instances:
         setattr(instance, 'flavor_id', instance.flavor['id'])
         if hasattr(instance, 'volume'):
