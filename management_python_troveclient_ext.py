@@ -140,7 +140,7 @@ def do_mgmt_show(cs, args):
     """Show details of an instance"""
     instance = cs.management_python_troveclient_ext.show(args.instance)
     instance._info['flavor'] = instance.flavor['id']
-    if hasattr(instance, 'volume'):
+    if hasattr(instance, 'volume') and instance.volume:
         instance._info['volume'] = instance.volume['size']
         if 'id' in instance.volume:
             instance._info['volume_id'] = instance.volume['id']
