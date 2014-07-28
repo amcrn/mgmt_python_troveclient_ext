@@ -45,6 +45,9 @@ def do_mgmt_cluster_show(cs, args):
     cluster = cs.management_cluster_python_troveclient_ext.show(args.cluster)
     cluster._info['datastore'] = cluster.datastore['type']
     cluster._info['datastore_version'] = cluster.datastore['version']
+    cluster._info['task_name'] = cluster.task['name']
+    cluster._info['task_description'] = cluster.task['description']
+    del cluster._info['task']
     if hasattr(cluster, 'ip'):
         cluster._info['ip'] = ', '.join(cluster.ip)
     del cluster._info['instances']
