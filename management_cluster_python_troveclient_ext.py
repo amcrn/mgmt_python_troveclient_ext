@@ -15,6 +15,7 @@
 
 
 from troveclient import base
+from troveclient import common
 from troveclient import utils
 from troveclient.v1 import clusters
 
@@ -30,6 +31,17 @@ class MgmtClusters(base.ManagerWithFind):
     def show(self, cluster):
         """Get details of one cluster."""
         return self._get("/mgmt/clusters/%s" % base.getid(cluster), 'cluster')
+
+    def _action(self, cluster_id, body):
+        """Perform a cluster action, e.g. reset-task."""
+        url = "/mgmt/clusters/%s/action" % cluster_id
+        resp, body = self.api.client.post(url, body=body)
+        common.check_for_exceptions(resp, body, url)
+
+    def reset_task(self, cluster_id):
+        """Reset the current cluster task to NONE."""
+        body = {'reset-task': {}}
+        self._action(cluster_id, body)
 
 
 def _print_cluster(cluster):
@@ -67,3 +79,10 @@ def do_mgmt_cluster_instances(cs, args):
     utils.print_list(
         instances, ['id', 'name', 'flavor_id', 'size'],
         obj_is_dict=True)
+
+
+@utils.arg('cluster', metavar='<cluster>', help='ID of the cluster.')
+@utils.service_type('database')
+def do_mgmt_cluster_reset_task(cs, args):
+    """Reset the current cluster task to NONE."""
+    cs.management_cluster_python_troveclient_ext.reset_task(args.cluster)
