@@ -77,7 +77,7 @@ def do_mgmt_cluster_instances(cs, args):
         if instance.get('volume'):
             instance['size'] = instance['volume']['size']
     utils.print_list(
-        instances, ['id', 'name', 'flavor_id', 'size'],
+        instances, ['id', 'name', 'type', 'flavor_id', 'size'],
         obj_is_dict=True)
 
 
