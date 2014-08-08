@@ -32,6 +32,23 @@ class MgmtClusters(base.ManagerWithFind):
         """Get details of one cluster."""
         return self._get("/mgmt/clusters/%s" % base.getid(cluster), 'cluster')
 
+    def index(self, deleted=None, limit=None, marker=None):
+        """Show an overview of all local clusters.
+
+        Optionally, filter by deleted status.
+
+        :rtype: list of :class:`Cluster`.
+        """
+        form = ''
+        if deleted is not None:
+            if deleted:
+                form = "?deleted=true"
+            else:
+                form = "?deleted=false"
+
+        url = "/mgmt/clusters%s" % form
+        return self._paginated(url, "clusters", limit, marker)
+
     def _action(self, cluster_id, body):
         """Perform a cluster action, e.g. reset-task."""
         url = "/mgmt/clusters/%s/action" % cluster_id
@@ -64,6 +81,25 @@ def do_mgmt_cluster_show(cs, args):
         cluster._info['ip'] = ', '.join(cluster.ip)
     del cluster._info['instances']
     _print_cluster(cluster)
+
+
+@utils.arg('--deleted', metavar='<deleted>', default=None,
+           help='Optional. Filter clusters on deleted.')
+@utils.service_type('database')
+def do_mgmt_cluster_list(cs, args):
+    """List all clusters"""
+    clusters = cs.management_cluster_python_troveclient_ext.index(
+        deleted=args.deleted)
+    for cluster in clusters:
+        if hasattr(cluster, 'datastore'):
+            setattr(cluster, 'datastore_version',
+                    cluster.datastore['version'])
+            setattr(cluster, 'datastore', cluster.datastore['type'])
+        setattr(cluster, 'task_name', cluster.task['name'])
+    utils.print_list(clusters,
+                     ['id', 'name', 'tenant_id',
+                      'datastore', 'datastore_version', 'task_name', 'created',
+                      'deleted_at'])
 
 
 @utils.arg('cluster', metavar='<cluster>', help='ID of the cluster.')
