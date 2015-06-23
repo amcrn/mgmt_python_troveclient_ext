@@ -85,4 +85,4 @@ def do_mgmt_account_list(cs, args):
 def do_mgmt_account_show(cs, args):
     """Get a list of instances associated with an account"""
     account = cs.accounts_python_troveclient_ext.show(args.account)
-    utils.print_dict(account)
+    utils.print_dict(account.to_dict())
